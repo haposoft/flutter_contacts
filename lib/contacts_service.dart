@@ -9,19 +9,18 @@ export 'share.dart';
 
 class ContactsService {
   static const MethodChannel _channel =
-      MethodChannel('github.com/clovisnicolas/flutter_contacts');
+  MethodChannel('github.com/clovisnicolas/flutter_contacts');
 
   /// Fetches all contacts, or when specified, the contacts with a name
   /// matching [query]
-  static Future<List<Contact>> getContacts(
-      {String? query,
-      bool withThumbnails = true,
-      bool photoHighResolution = true,
-      bool orderByGivenName = true,
-      bool iOSLocalizedLabels = true,
-      bool androidLocalizedLabels = true}) async {
+  static Future<List<Contact>> getContacts({String? query,
+    bool withThumbnails = true,
+    bool photoHighResolution = true,
+    bool orderByGivenName = true,
+    bool iOSLocalizedLabels = true,
+    bool androidLocalizedLabels = true}) async {
     Iterable contacts =
-        await _channel.invokeMethod('getContacts', <String, dynamic>{
+    await _channel.invokeMethod('getContacts', <String, dynamic>{
       'query': query,
       'withThumbnails': withThumbnails,
       'photoHighResolution': photoHighResolution,
@@ -36,14 +35,14 @@ class ContactsService {
   /// matching [phone]
   static Future<List<Contact>> getContactsForPhone(String? phone,
       {bool withThumbnails = true,
-      bool photoHighResolution = true,
-      bool orderByGivenName = true,
-      bool iOSLocalizedLabels = true,
-      bool androidLocalizedLabels = true}) async {
+        bool photoHighResolution = true,
+        bool orderByGivenName = true,
+        bool iOSLocalizedLabels = true,
+        bool androidLocalizedLabels = true}) async {
     if (phone == null || phone.isEmpty) return List.empty();
 
     Iterable contacts =
-        await _channel.invokeMethod('getContactsForPhone', <String, dynamic>{
+    await _channel.invokeMethod('getContactsForPhone', <String, dynamic>{
       'phone': phone,
       'withThumbnails': withThumbnails,
       'photoHighResolution': photoHighResolution,
@@ -59,12 +58,12 @@ class ContactsService {
   /// Works only on iOS
   static Future<List<Contact>> getContactsForEmail(String email,
       {bool withThumbnails = true,
-      bool photoHighResolution = true,
-      bool orderByGivenName = true,
-      bool iOSLocalizedLabels = true,
-      bool androidLocalizedLabels = true}) async {
+        bool photoHighResolution = true,
+        bool orderByGivenName = true,
+        bool iOSLocalizedLabels = true,
+        bool androidLocalizedLabels = true}) async {
     List contacts =
-        await _channel.invokeMethod('getContactsForEmail', <String, dynamic>{
+    await _channel.invokeMethod('getContactsForEmail', <String, dynamic>{
       'email': email,
       'withThumbnails': withThumbnails,
       'photoHighResolution': photoHighResolution,
@@ -79,7 +78,7 @@ class ContactsService {
   /// not have an avatar, then `null` is returned in that slot. Only implemented
   /// on Android.
   static Future<Uint8List?> getAvatar(final Contact contact,
-          {final bool photoHighRes = true}) =>
+      {final bool photoHighRes = true}) =>
       _channel.invokeMethod('getAvatar', <String, dynamic>{
         'contact': Contact._toMap(contact),
         'photoHighResolution': photoHighRes,
@@ -97,11 +96,10 @@ class ContactsService {
   static Future updateContact(Contact contact) =>
       _channel.invokeMethod('updateContact', Contact._toMap(contact));
 
-  static Future<Contact> openContactForm(
-      {bool iOSLocalizedLabels = true,
-      bool androidLocalizedLabels = true}) async {
+  static Future<Contact> openContactForm({bool iOSLocalizedLabels = true,
+    bool androidLocalizedLabels = true}) async {
     dynamic result =
-        await _channel.invokeMethod('openContactForm', <String, dynamic>{
+    await _channel.invokeMethod('openContactForm', <String, dynamic>{
       'iOSLocalizedLabels': iOSLocalizedLabels,
       'androidLocalizedLabels': androidLocalizedLabels,
     });
@@ -110,7 +108,7 @@ class ContactsService {
 
   static Future<Contact> openExistingContact(Contact contact,
       {bool iOSLocalizedLabels = true,
-      bool androidLocalizedLabels = true}) async {
+        bool androidLocalizedLabels = true}) async {
     dynamic result = await _channel.invokeMethod(
       'openExistingContact',
       <String, dynamic>{
@@ -123,9 +121,8 @@ class ContactsService {
   }
 
   // Displays the device/native contact picker dialog and returns the contact selected by the user
-  static Future<Contact?> openDeviceContactPicker(
-      {bool iOSLocalizedLabels = true,
-      bool androidLocalizedLabels = true}) async {
+  static Future<Contact?> openDeviceContactPicker({bool iOSLocalizedLabels = true,
+    bool androidLocalizedLabels = true}) async {
     dynamic result = await _channel
         .invokeMethod('openDeviceContactPicker', <String, dynamic>{
       'iOSLocalizedLabels': iOSLocalizedLabels,
@@ -169,6 +166,7 @@ class FormOperationException implements Exception {
   final FormOperationErrorCode? errorCode;
 
   const FormOperationException({this.errorCode});
+
   String toString() => 'FormOperationException: $errorCode';
 }
 
@@ -185,6 +183,9 @@ class Contact {
     this.middleName,
     this.prefix,
     this.suffix,
+    this.firstPhonetic,
+    this.middlePhonetic,
+    this.lastPhonetic,
     this.familyName,
     this.company,
     this.jobTitle,
@@ -203,7 +204,7 @@ class Contact {
       givenName,
       middleName,
       prefix,
-      suffix,
+      suffix, firstPhonetic, middlePhonetic, lastPhonetic,
       familyName,
       company,
       jobTitle;
@@ -217,7 +218,7 @@ class Contact {
 
   String initials() {
     return ((this.givenName?.isNotEmpty == true ? this.givenName![0] : "") +
-            (this.familyName?.isNotEmpty == true ? this.familyName![0] : ""))
+        (this.familyName?.isNotEmpty == true ? this.familyName![0] : ""))
         .toUpperCase();
   }
 
@@ -229,6 +230,9 @@ class Contact {
     familyName = m["familyName"];
     prefix = m["prefix"];
     suffix = m["suffix"];
+    firstPhonetic = m["firstPhonetic"];
+    middlePhonetic = m["middlePhonetic"];
+    lastPhonetic = m["lastPhonetic"];
     company = m["company"];
     jobTitle = m["jobTitle"];
     androidAccountTypeRaw = m["androidAccountType"];
@@ -263,7 +267,8 @@ class Contact {
 
     final birthday = contact.birthday == null
         ? null
-        : "${contact.birthday!.year.toString()}-${contact.birthday!.month.toString().padLeft(2, '0')}-${contact.birthday!.day.toString().padLeft(2, '0')}";
+        : "${contact.birthday!.year.toString()}-${contact.birthday!.month.toString().padLeft(2, '0')}-${contact.birthday!.day.toString().padLeft(
+        2, '0')}";
 
     return {
       "identifier": contact.identifier,
@@ -273,6 +278,9 @@ class Contact {
       "familyName": contact.familyName,
       "prefix": contact.prefix,
       "suffix": contact.suffix,
+      "firstPhonetic": contact.firstPhonetic,
+      "middlePhonetic": contact.middlePhonetic,
+      "lastPhonetic": contact.lastPhonetic,
       "company": contact.company,
       "jobTitle": contact.jobTitle,
       "androidAccountType": contact.androidAccountTypeRaw,
@@ -290,11 +298,15 @@ class Contact {
   }
 
   /// The [+] operator fills in this contact's empty fields with the fields from [other]
-  operator +(Contact other) => Contact(
+  operator +(Contact other) =>
+      Contact(
         givenName: this.givenName ?? other.givenName,
         middleName: this.middleName ?? other.middleName,
         prefix: this.prefix ?? other.prefix,
         suffix: this.suffix ?? other.suffix,
+        firstPhonetic: this.firstPhonetic ?? other.firstPhonetic,
+        middlePhonetic: this.middlePhonetic ?? other.middlePhonetic,
+        lastPhonetic: this.lastPhonetic ?? other.lastPhonetic,
         familyName: this.familyName ?? other.familyName,
         company: this.company ?? other.company,
         jobTitle: this.jobTitle ?? other.jobTitle,
@@ -303,24 +315,24 @@ class Contact {
         emails: this.emails == null
             ? other.emails
             : this
-                .emails!
-                .toSet()
-                .union(other.emails?.toSet() ?? Set())
-                .toList(),
+            .emails!
+            .toSet()
+            .union(other.emails?.toSet() ?? Set())
+            .toList(),
         phones: this.phones == null
             ? other.phones
             : this
-                .phones!
-                .toSet()
-                .union(other.phones?.toSet() ?? Set())
-                .toList(),
+            .phones!
+            .toSet()
+            .union(other.phones?.toSet() ?? Set())
+            .toList(),
         postalAddresses: this.postalAddresses == null
             ? other.postalAddresses
             : this
-                .postalAddresses!
-                .toSet()
-                .union(other.postalAddresses?.toSet() ?? Set())
-                .toList(),
+            .postalAddresses!
+            .toSet()
+            .union(other.postalAddresses?.toSet() ?? Set())
+            .toList(),
         avatar: this.avatar ?? other.avatar,
         birthday: this.birthday ?? other.birthday,
       );
@@ -341,6 +353,9 @@ class Contact {
         this.middleName == other.middleName &&
         this.prefix == other.prefix &&
         this.suffix == other.suffix &&
+        this.firstPhonetic == other.firstPhonetic &&
+        this.middlePhonetic == other.middlePhonetic &&
+        this.lastPhonetic == other.lastPhonetic &&
         this.birthday == other.birthday &&
         DeepCollectionEquality.unordered().equals(this.phones, other.phones) &&
         DeepCollectionEquality.unordered().equals(this.emails, other.emails) &&
@@ -362,6 +377,9 @@ class Contact {
       this.middleName,
       this.prefix,
       this.suffix,
+      this.firstPhonetic,
+      this.middlePhonetic,
+      this.lastPhonetic,
       this.birthday,
     ].where((s) => s != null));
   }
@@ -385,13 +403,13 @@ class Contact {
 }
 
 class PostalAddress {
-  PostalAddress(
-      {this.label,
-      this.street,
-      this.city,
-      this.postcode,
-      this.region,
-      this.country});
+  PostalAddress({this.label,
+    this.street,
+    this.city,
+    this.postcode,
+    this.region,
+    this.country});
+
   String? label, street, city, postcode, region, country;
 
   PostalAddress.fromMap(Map m) {
@@ -426,7 +444,8 @@ class PostalAddress {
     ].where((s) => s != null));
   }
 
-  static Map _toMap(PostalAddress address) => {
+  static Map _toMap(PostalAddress address) =>
+      {
         "label": address.label,
         "street": address.street,
         "city": address.city,
@@ -499,3 +518,4 @@ class Item {
 }
 
 enum AndroidAccountType { facebook, google, whatsapp, other }
+

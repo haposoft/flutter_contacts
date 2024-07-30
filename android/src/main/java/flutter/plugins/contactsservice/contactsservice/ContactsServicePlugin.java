@@ -183,6 +183,9 @@ public class ContactsServicePlugin implements MethodCallHandler, FlutterPlugin, 
                   StructuredName.FAMILY_NAME,
                   StructuredName.PREFIX,
                   StructuredName.SUFFIX,
+                  StructuredName.PHONETIC_GIVEN_NAME,
+                  StructuredName.PHONETIC_FAMILY_NAME,
+                  StructuredName.PHONETIC_MIDDLE_NAME,
                   CommonDataKinds.Note.NOTE,
                   Phone.NUMBER,
                   Phone.TYPE,
@@ -287,7 +290,6 @@ public class ContactsServicePlugin implements MethodCallHandler, FlutterPlugin, 
           return true;
         }
         Uri contactUri = intent.getData();
-          if (intent != null){
         Cursor cursor = contentResolver.query(contactUri, null, null, null, null);
         if (cursor.moveToFirst()) {
           String id = contactUri.getLastPathSegment();
@@ -295,7 +297,7 @@ public class ContactsServicePlugin implements MethodCallHandler, FlutterPlugin, 
         } else {
           Log.e(LOG_TAG, "onActivityResult - cursor.moveToFirst() returns false");
           finishWithResult(FORM_OPERATION_CANCELED);
-        }}else{return true;}
+        }
         cursor.close();
         return true;
       }
@@ -333,9 +335,9 @@ public class ContactsServicePlugin implements MethodCallHandler, FlutterPlugin, 
     }
 
     void openContactPicker() {
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType(ContactsContract.Contacts.CONTENT_TYPE);
-        startIntent(intent, REQUEST_OPEN_CONTACT_PICKER);
+      Intent intent = new Intent(Intent.ACTION_PICK);
+      intent.setType(ContactsContract.Contacts.CONTENT_TYPE);
+      startIntent(intent, REQUEST_OPEN_CONTACT_PICKER);
     }
 
     void startIntent(Intent intent, int request) {
@@ -364,17 +366,17 @@ public class ContactsServicePlugin implements MethodCallHandler, FlutterPlugin, 
       return null;
     }
   }
-  
-    private void openDeviceContactPicker(Result result, boolean localizedLabels) {
-      if (delegate != null) {
-        delegate.setResult(result);
-        delegate.setLocalizedLabels(localizedLabels);
-        delegate.openContactPicker();
-      } else {
-        result.success(FORM_COULD_NOT_BE_OPEN);
-      }
+
+  private void openDeviceContactPicker(Result result, boolean localizedLabels) {
+    if (delegate != null) {
+      delegate.setResult(result);
+      delegate.setLocalizedLabels(localizedLabels);
+      delegate.openContactPicker();
+    } else {
+      result.success(FORM_COULD_NOT_BE_OPEN);
+    }
   }
-  
+
   private class ContactServiceDelegateOld extends BaseContactsServiceDelegate {
     private final PluginRegistry.Registrar registrar;
 
@@ -583,6 +585,9 @@ public class ContactsServicePlugin implements MethodCallHandler, FlutterPlugin, 
         contact.familyName = cursor.getString(cursor.getColumnIndex(StructuredName.FAMILY_NAME));
         contact.prefix = cursor.getString(cursor.getColumnIndex(StructuredName.PREFIX));
         contact.suffix = cursor.getString(cursor.getColumnIndex(StructuredName.SUFFIX));
+        contact.firstPhonetic = cursor.getString(cursor.getColumnIndex(StructuredName.PHONETIC_GIVEN_NAME));
+        contact.middlePhonetic = cursor.getString(cursor.getColumnIndex(StructuredName.PHONETIC_MIDDLE_NAME));
+        contact.lastPhonetic = cursor.getString(cursor.getColumnIndex(StructuredName.PHONETIC_FAMILY_NAME));
       }
       // NOTE
       else if (mimeType.equals(CommonDataKinds.Note.CONTENT_ITEM_TYPE)) {
@@ -936,3 +941,4 @@ public class ContactsServicePlugin implements MethodCallHandler, FlutterPlugin, 
   }
 
 }
+

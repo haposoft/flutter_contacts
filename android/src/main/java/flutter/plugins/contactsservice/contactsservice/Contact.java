@@ -13,7 +13,7 @@ public class Contact implements Comparable<Contact> {
     }
 
     String identifier;
-    String displayName, givenName, middleName, familyName, prefix, suffix, company, jobTitle, note, birthday, androidAccountType, androidAccountName;
+    String displayName, givenName, middleName, familyName, prefix, suffix, firstPhonetic, middlePhonetic, lastPhonetic, company, jobTitle, note, birthday, androidAccountType, androidAccountName;
     ArrayList<Item> emails = new ArrayList<>();
     ArrayList<Item> phones = new ArrayList<>();
     ArrayList<PostalAddress> postalAddresses = new ArrayList<>();
@@ -28,6 +28,9 @@ public class Contact implements Comparable<Contact> {
         contactMap.put("familyName", familyName);
         contactMap.put("prefix", prefix);
         contactMap.put("suffix", suffix);
+        contactMap.put("firstPhonetic", firstPhonetic);
+        contactMap.put("middlePhonetic", middlePhonetic);
+        contactMap.put("lastPhonetic", lastPhonetic);
         contactMap.put("company", company);
         contactMap.put("jobTitle", jobTitle);
         contactMap.put("avatar", avatar);
@@ -66,6 +69,9 @@ public class Contact implements Comparable<Contact> {
         contact.familyName = (String) map.get("familyName");
         contact.prefix = (String) map.get("prefix");
         contact.suffix = (String) map.get("suffix");
+        contact.firstPhonetic = (String) map.get("firstPhonetic");
+        contact.middlePhonetic = (String) map.get("middlePhonetic");
+        contact.lastPhonetic = (String) map.get("lastPhonetic");
         contact.company = (String) map.get("company");
         contact.jobTitle = (String) map.get("jobTitle");
         contact.avatar = (byte[]) map.get("avatar");
@@ -99,7 +105,7 @@ public class Contact implements Comparable<Contact> {
     public int compareTo(Contact contact) {
         String givenName1 = this.givenName == null ? "" : this.givenName.toLowerCase();
         String givenName2 = contact == null ? ""
-            : (contact.givenName == null ? "" : contact.givenName.toLowerCase());
+                : (contact.givenName == null ? "" : contact.givenName.toLowerCase());
         return givenName1.compareTo(givenName2);
     }
 }
