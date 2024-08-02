@@ -714,18 +714,20 @@ public class ContactsServicePlugin implements MethodCallHandler, FlutterPlugin, 
     ArrayList<ContentProviderOperation> ops = new ArrayList<>();
 
     ContentProviderOperation.Builder op = ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)
-            .withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, null)
-            .withValue(ContactsContract.RawContacts.ACCOUNT_NAME, null);
+            .withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, contact.androidAccountType)
+            .withValue(ContactsContract.RawContacts.ACCOUNT_NAME, contact.androidAccountName);
     ops.add(op.build());
 
     op = ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
             .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
             .withValue(ContactsContract.Data.MIMETYPE, CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
-            .withValue(StructuredName.GIVEN_NAME, contact.givenName)
-            .withValue(StructuredName.MIDDLE_NAME, contact.middleName)
+            .withValue(StructuredName.DISPLAY_NAME, contact.displayName)
             .withValue(StructuredName.FAMILY_NAME, contact.familyName)
             .withValue(StructuredName.PREFIX, contact.prefix)
-            .withValue(StructuredName.SUFFIX, contact.suffix);
+            .withValue(StructuredName.SUFFIX, contact.suffix)
+            .withValue(StructuredName.PHONETIC_GIVEN_NAME, contact.firstPhonetic)
+            .withValue(StructuredName.PHONETIC_MIDDLE_NAME, contact.middlePhonetic)
+            .withValue(StructuredName.PHONETIC_FAMILY_NAME, contact.lastPhonetic);
     ops.add(op.build());
 
     op = ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
