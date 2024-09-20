@@ -197,6 +197,7 @@ class Contact {
     this.androidAccountType,
     this.androidAccountTypeRaw,
     this.androidAccountName,
+    this.timeLastUpdated,
   });
 
   String? identifier,
@@ -210,6 +211,7 @@ class Contact {
       jobTitle;
   String? androidAccountTypeRaw, androidAccountName;
   AndroidAccountType? androidAccountType;
+  String? timeLastUpdated;
   List<Item>? emails = [];
   List<Item>? phones = [];
   List<PostalAddress>? postalAddresses = [];
@@ -238,6 +240,7 @@ class Contact {
     androidAccountTypeRaw = m["androidAccountType"];
     androidAccountType = accountTypeFromString(androidAccountTypeRaw);
     androidAccountName = m["androidAccountName"];
+    timeLastUpdated = m["timeLastUpdated"];
     emails = (m["emails"] as List?)?.map((m) => Item.fromMap(m)).toList();
     phones = (m["phones"] as List?)?.map((m) => Item.fromMap(m)).toList();
     postalAddresses = (m["postalAddresses"] as List?)
@@ -285,6 +288,7 @@ class Contact {
       "jobTitle": contact.jobTitle,
       "androidAccountType": contact.androidAccountTypeRaw,
       "androidAccountName": contact.androidAccountName,
+      "timeLastUpdated": contact.timeLastUpdated,
       "emails": emails,
       "phones": phones,
       "postalAddresses": postalAddresses,
@@ -312,6 +316,7 @@ class Contact {
         jobTitle: this.jobTitle ?? other.jobTitle,
         androidAccountType: this.androidAccountType ?? other.androidAccountType,
         androidAccountName: this.androidAccountName ?? other.androidAccountName,
+        timeLastUpdated: this.timeLastUpdated ?? other.timeLastUpdated,
         emails: this.emails == null
             ? other.emails
             : this
@@ -350,6 +355,7 @@ class Contact {
         this.jobTitle == other.jobTitle &&
         this.androidAccountType == other.androidAccountType &&
         this.androidAccountName == other.androidAccountName &&
+        this.timeLastUpdated == other.timeLastUpdated &&
         this.middleName == other.middleName &&
         this.prefix == other.prefix &&
         this.suffix == other.suffix &&
@@ -374,6 +380,7 @@ class Contact {
       this.jobTitle,
       this.androidAccountType,
       this.androidAccountName,
+      this.timeLastUpdated,
       this.middleName,
       this.prefix,
       this.suffix,

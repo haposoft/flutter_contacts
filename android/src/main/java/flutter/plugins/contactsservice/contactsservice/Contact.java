@@ -13,7 +13,7 @@ public class Contact implements Comparable<Contact> {
     }
 
     String identifier;
-    String displayName, givenName, middleName, familyName, prefix, suffix, firstPhonetic, middlePhonetic, lastPhonetic, company, jobTitle, note, birthday, androidAccountType, androidAccountName;
+    String displayName, givenName, middleName, familyName, prefix, suffix, firstPhonetic, middlePhonetic, lastPhonetic, company, jobTitle, note, birthday, androidAccountType, androidAccountName, timeLastUpdated;
     ArrayList<Item> emails = new ArrayList<>();
     ArrayList<Item> phones = new ArrayList<>();
     ArrayList<PostalAddress> postalAddresses = new ArrayList<>();
@@ -38,6 +38,7 @@ public class Contact implements Comparable<Contact> {
         contactMap.put("birthday", birthday);
         contactMap.put("androidAccountType", androidAccountType);
         contactMap.put("androidAccountName", androidAccountName);
+        contactMap.put("timeLastUpdated", timeLastUpdated);
 
         ArrayList<HashMap<String, String>> emailsMap = new ArrayList<>();
         for (Item email : emails) {
@@ -79,6 +80,7 @@ public class Contact implements Comparable<Contact> {
         contact.birthday = (String) map.get("birthday");
         contact.androidAccountType = (String) map.get("androidAccountType");
         contact.androidAccountName = (String) map.get("androidAccountName");
+        contact.timeLastUpdated = (String) map.get("timeLastUpdated");
 
         ArrayList<HashMap> emails = (ArrayList<HashMap>) map.get("emails");
         if (emails != null) {
@@ -104,8 +106,7 @@ public class Contact implements Comparable<Contact> {
     @Override
     public int compareTo(Contact contact) {
         String givenName1 = this.givenName == null ? "" : this.givenName.toLowerCase();
-        String givenName2 = contact == null ? ""
-                : (contact.givenName == null ? "" : contact.givenName.toLowerCase());
+        String givenName2 = contact == null ? "" : (contact.givenName == null ? "" : contact.givenName.toLowerCase());
         return givenName1.compareTo(givenName2);
     }
 }
